@@ -1,0 +1,43 @@
+module.exports.config = {
+ name: "gaan",
+ version: "1.0.0",
+ hasPermssion: 0,
+ credits: "Shaon Ahmed",
+ description: "ANIME VIDEO",
+ commandCategory: "group",
+ usages: "gaan",
+ cooldowns: 5,
+ dependencies: {
+ 'request': '',
+ 'fs-extra': '',
+ 'axios': ''
+ }
+};
+
+module.exports.run = async ({ api, event, args }) => {
+ const request = global.nodemodule.request;
+ const fs = global.nodemodule["fs-extra"];
+ 
+ 
+ const messages = [
+ "☆《ANIME VIDEO》☆"
+ ];
+ const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+ 
+ // Video URLs
+ const videoUrls = [
+"https://files.catbox.moe/bzjk0y.mp3",
+];
+ 
+ const randomVideoUrl = videoUrls[Math.floor(Math.random() * videoUrls.length)];
+ const cachePath = __dirname + "/cache/anime_video.mp4";
+
+ const sendVideo = () => api.sendMessage({
+ body: `「 ${randomMessage} 」`,
+ attachment: fs.createReadStream(cachePath)
+ }, event.threadID, () => fs.unlinkSync(cachePath));
+
+ request(encodeURI(randomVideoUrl))
+ .pipe(fs.createWriteStream(cachePath))
+ .on("close", () => sendVideo());
+};
